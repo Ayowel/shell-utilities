@@ -7,3 +7,10 @@ This is a repository of utility functions commonly used in scripts. They are spe
 ## Usage
 
 Usage from source relies on inclusion with `source` or `.`. Depending on your use-case, you might want to copy the functions you want to use instead.
+
+## Tooling
+
+For code linting, we rely on [shellcheck](https://github.com/koalaman/shellcheck).
+
+For documentation, we rely on [Doxygen](https://github.com/doxygen/doxygen) with the [bash-doxygen](https://github.com/Anvil/bash-doxygen) filter for shell compatibility
+

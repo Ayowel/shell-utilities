@@ -1,8 +1,5 @@
 ## @file
-## @author Guillaume Foreau <ayowel@noreply.github.com>
-## @copyright CC-BY
 ## @brief Help to parse arguments written free-flow by a user
-
 
 ## @fn argument_parsing_assistant()
 ## @brief Argument parsing intemediate function to ease the handling of multiple ways to input parameters
