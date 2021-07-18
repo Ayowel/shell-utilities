@@ -14,6 +14,10 @@
 ##   #ARGPARSE_LONG_OPTION_FIELD_SEPARATOR
 function argument_parsing_assistant() {
   local callback_function="$1"
+  if test "$#" -eq 0; then
+    echo 'argument_parsing_assistant should never be called without providing a callback function' >&2
+    return 1
+  fi
   shift
 
   # Set default environment parameters values if not set

@@ -26,13 +26,13 @@ function merge_parameters() {
 ## @fn fatal()
 ## @brief Exit script with an error message
 ## @param message Error message to print
-## @param retVal Script exit value
+## @param retVal Script exit value (Defaults to 1)
 function fatal() {
   local message="$1"
-  local retVal="$2"
+  local retVal="${2:-1}"
   
   if test -n "$message"; then
-    echo "[FATAL] $message" >&2:
+    echo "[FATAL] $message" >&2
   fi
   exit "$retVal"
 }
