@@ -12,7 +12,7 @@
 ##   #ARGPARSE_SHORT_OPTION_ENABLE, #ARGPARSE_LONG_OPTION_ENABLE,
 ##   #ARGPARSE_SHORT_OPTION_NORMALIZED_PREFIX, #ARGPARSE_LONG_OPTION_NORMALIZED_PREFIX, and
 ##   #ARGPARSE_LONG_OPTION_FIELD_SEPARATOR
-function argument_parsing_assistant() {
+argument_parsing_assistant() {
   local callback_function="$1"
   if test "$#" -eq 0; then
     echo 'argument_parsing_assistant should never be called without providing a callback function' >&2
@@ -37,7 +37,7 @@ function argument_parsing_assistant() {
   local current_parameter
   local current_option_prefix
   local dangling_option_string=
-  while test "$#" -gt 0 && test -z "$dangling_option_string"; do
+  while test "$#" -gt 0 || test -n "$dangling_option_string"; do
     local option_prefix_iterator=
     local option_candidate
     local is_option_found=1
@@ -72,14 +72,14 @@ function argument_parsing_assistant() {
       for option_prefix_iterator in "${ARGPARSE_LONG_OPTION_PREFIX[@]}"; do
         if test "$option_prefix_iterator" == "${option_candidate:0:${#option_prefix_iterator}}"; then
           is_option_found=0
-          is_option_long=1
+          is_option_long=0
           current_option_prefix="$option_prefix_iterator"
 
           if test -n "$ARGPARSE_LONG_OPTION_FIELD_SEPARATOR"; then
             if test "$option_candidate" != "${option_candidate#*$ARGPARSE_LONG_OPTION_FIELD_SEPARATOR}"; then
               is_parameter_merged=0
-              current_option="${option_candidate#*${ARGPARSE_LONG_OPTION_FIELD_SEPARATOR}}"
-              current_parameter="${option_candidate%%${ARGPARSE_LONG_OPTION_FIELD_SEPARATOR}*}"
+              current_option="${option_candidate%%${ARGPARSE_LONG_OPTION_FIELD_SEPARATOR}*}"
+              current_parameter="${option_candidate#*${ARGPARSE_LONG_OPTION_FIELD_SEPARATOR}}"
             fi
           fi
           if test -z "$current_option"; then
@@ -151,4 +151,5 @@ function argument_parsing_assistant() {
         return "$retval"
     esac
   done
+  return 0
 }

@@ -33,7 +33,7 @@ declare ARGPARSE_LONG_OPTION_FIELD_SEPARATOR="="
 ##    * 1 if only the option (or parameter if no option was provided) was consumed
 ##    * 0 or 2 if the parameter was consumed
 ##    * any other value if an error occured
-function argument_parsing_assistant_virtual_callback() {
+argument_parsing_assistant_virtual_callback() {
   # Template method for documentation
   local option="$1"
   local value="$2"

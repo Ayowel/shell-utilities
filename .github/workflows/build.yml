@@ -1,0 +1,25 @@
+name: Continuous Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set-up environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen shellcheck kcov make curl
+          curl -Lo shellcheck.tar.gz https://github.com/shellspec/shellspec/releases/download/0.28.1/shellspec-dist.tar.gz
+          sudo tar -xzf shellcheck.tar.gz -C /usr/bin --strip-components 1
+          rm -f shellcheck.tar.gz
+      - name: Full build
+        run: make all
+      - name: Publish coverage
+        uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: false

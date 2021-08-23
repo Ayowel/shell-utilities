@@ -1,0 +1,43 @@
+name: Continuous Build
+
+on:
+  push:
+    tags:
+      - '[0-9]*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set-up environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y doxygen shellcheck kcov make curl
+        curl -Lo shellcheck.tar.gz https://github.com/shellspec/shellspec/releases/download/0.28.1/shellspec-dist.tar.gz
+        sudo tar -xzf shellcheck.tar.gz -C /usr/bin --strip-components 1
+        rm -f shellcheck.tar.gz
+    - name: Full build
+      run: make
+    - name: Publish coverage
+      uses: codecov/codecov-action@v1
+      with:
+        fail_ci_if_error: false
+    - name: Finalize release preparation
+      run: |
+        awk -e '/^## /{a+=1} {if(a==1)print$0}' CHANGELOG.md >CHANGELOG.release.md
+        mv shell-utilities.tar.gz shell-utilities-${GITHUB_REF##*/}.tar.gz
+    - name: Release to github
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        name: Release ${GITHUB_REF##*/}
+        draft: true
+        body_path: CHANGELOG.release.md
+        files: |
+          shell-utilities-${GITHUB_REF##*/}.tar.gz
+          LICENSE
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
