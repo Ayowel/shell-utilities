@@ -3,10 +3,9 @@ source_doc_scripts := $(wildcard src-doc/*.sh)
 build_dir := target
 cleanup_paths := docs $(build_dir)
 
-.PHONY: all clean doc lint package purge
-.PRECIOUS: shell-utilities-%.tar.gz
+.PHONY: all clean doc lint test package purge
 
-all: lint doc package
+all: lint test doc package
 
 clean:
 	rm -rf $(cleanup_paths)
@@ -18,18 +17,20 @@ doc:
 	doxygen Doxyfile
 
 lint:
-	shellcheck -s bash $(source_scripts)
-	shellcheck --shell bash -e 2034 $(source_doc_scripts)
+	shellcheck -s sh -e SC2039 $(source_scripts)
+	shellcheck -s sh -e SC2034,SC2039 $(source_doc_scripts)
 
-package: package-dev
+test:
+	shellspec -s bash -f tap --kcov
 
-package-%: shell-utilities-%.tar.gz ;
+package: shell-utilities.tar.gz ;
 
 $(build_dir):
 	mkdir -p $@
 
-$(build_dir)/shell-utilities: $(build_dir)
-	test -e $@ || ( cd $(build_dir) && ln -sf ../src shell-utilities )
+$(build_dir)/shell-utilities: $(build_dir) $(source_scripts)
+	mkdir -p $(build_dir)/shell-utilities
+	cp $(source_scripts) $(build_dir)/shell-utilities
 
-shell-utilities-%.tar.gz: $(build_dir)/shell-utilities
+shell-utilities.tar.gz: $(build_dir)/shell-utilities
 	tar -czf $@ -C $(build_dir) shell-utilities

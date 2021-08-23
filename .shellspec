@@ -1,0 +1,4 @@
+--require spec_helper
+
+## kcov (coverage) options
+--kcov-options "--include-path=./src --path-strip-level=1"
